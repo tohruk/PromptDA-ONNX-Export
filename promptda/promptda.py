@@ -105,10 +105,14 @@ class PromptDA(nn.Module):
     def normalize(self,
                   prompt_depth: torch.Tensor):
         B, C, H, W = prompt_depth.shape
-        min_val = torch.quantile(
-            prompt_depth.reshape(B, -1), 0., dim=1, keepdim=True)[:, :, None, None]
-        max_val = torch.quantile(
-            prompt_depth.reshape(B, -1), 1., dim=1, keepdim=True)[:, :, None, None]
+        #min_val = torch.quantile(
+        #    prompt_depth.reshape(B, -1), 0., dim=1, keepdim=True)[:, :, None, None]
+        min_val, min_ind = torch.min(prompt_depth.reshape(B, -1), 1, keepdim=True)
+        min_val = min_val.view(1,1,1,-1)
+        #max_val = torch.quantile(
+        #    prompt_depth.reshape(B, -1), 1., dim=1, keepdim=True)[:, :, None, None]
+        max_val, max_ind = torch.max(prompt_depth.reshape(B, -1), 1, keepdim=True)
+        max_val = max_val.view(1,1,1,-1)
         prompt_depth = (prompt_depth - min_val) / (max_val - min_val)
         return prompt_depth, min_val, max_val
 

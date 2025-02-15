@@ -139,7 +139,7 @@ class DPTHead(nn.Module):
             path_2, layer_1_rn, prompt_depth=prompt_depth)
         out = self.scratch.output_conv1(path_1)
         out_feat = F.interpolate(
-            out, (int(patch_h * 14), int(patch_w * 14)),
+            out, (patch_h * 14, patch_w * 14),
             mode="bilinear", align_corners=True)
         out = self.scratch.output_conv2(out_feat)
         return out
